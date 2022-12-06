@@ -67,11 +67,6 @@ while True:
              print('Power of the given numbers', power(n1,n2)
 
          
-        
-
-
-        
-
-    else:
+      else:
             print("Please select correct operator!")
 
