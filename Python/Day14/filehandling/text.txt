@@ -1,0 +1,5 @@
+File handling in simple it means handling of files such as opening the file,
+reading, writing, and many other operations. Unlike other programming languages,
+Python treats files as text or binary.
+In this programming language, each line of the file ends with a
+special character known as EOL (End of the line) like comma (,) or newline character.
