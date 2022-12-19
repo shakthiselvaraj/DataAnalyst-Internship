@@ -1,6 +1,0 @@
-name= input('enter the name:' )
-print('Hello',end=' ' + name)
-print('\n')
-a= int(input("enter the number:"))
-b= int(input('enter the number'))
-print('The Sum of two Number is',end=' ' + str(a+b))
