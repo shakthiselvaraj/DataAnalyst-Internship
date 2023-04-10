@@ -1,0 +1,155 @@
+COMBINE DATA IN SINGLE SHEET
+
+
+
+!pip install --upgrade gspread
+from google.colab import auth
+auth.authenticate_user()
+
+import gspread
+from google.auth import default
+creds, _ = default()
+
+gc = gspread.authorize(creds)
+
+import pandas as pd
+wb = gc.open_by_url('https://docs.google.com/spreadsheets/d/1hkevi4hfZhpv6V_2yzBskR_SZTF8TwpwjEMVp4zZMXA/edit#gid=470992409')
+listOfFrames = []
+for ws in wb.worksheets():
+  if ws.title != "Complete Data":
+    rows = ws.get_all_values()
+    df = pd.DataFrame.from_records(rows[1:],columns=rows[0])
+    
+
+listOfFrames.append(df)
+
+combined = pd.concat(listOfFrames)
+combined = combined.fillna("")
+master = wb.worksheet("Complete Data")
+master.update("A1",combinedData)
+
+
+
+MYSQL CONNECTION
+
+import mysql.connector as msql
+from mysql.connector import Error
+try:
+    conn = msql.connect(host='localhost', user='root',
+                        password='Shakthi#1399')
+    if conn.is_connected():
+        cursor = conn.cursor()
+        cursor.execute("CREATE DATABASE FinalProject")
+        print("Database is created")
+except Error as e:
+    print("Error while connecting to MySQL", e)
+
+import pandas as pd
+a = pd.read_csv("C:\\Users\\shakt\\Downloads\\Data Source - Complete Data.csv", index_col=False, delimiter = ',')
+a.head()
+
+
+
+a = a.where((pd.notnull(a)), None)
+
+
+
+import mysql.connector as msql
+from mysql.connector import Error
+try:
+    conn = msql.connect(host='localhost', database='FinalProject', user='root', password='Shakthi#1399')
+    if conn.is_connected():
+        cursor = conn.cursor()
+        cursor.execute("select database();")
+        record = cursor.fetchone()
+        print("You're connected to database: ", record)
+        cursor.execute('DROP TABLE IF EXISTS details;')
+        print('Creating table....')
+        cursor.execute("CREATE TABLE details(Sourcer varchar(255),Profile varchar(255),Date varchar(255),Name varchar(255),Contact_NO varchar(255),Email_ID varchar(255),ExperienceInYear varchar(255),Rel_Exp varchar(255),CTC varchar(255),ECTC varchar(255),NoticePeriod varchar(255),Current_Location varchar(255),Preferred_Location varchar(255),CV_URL varchar(255),LinkedIn_URL varchar(255),Status varchar(255))")
+        print("Table is created....")
+        for i,row in a.iterrows():
+            sql = "INSERT INTO FinalProject.details VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+            cursor.execute(sql, tuple(row))
+            print("Record inserted")
+            conn.commit()
+except Error as e:
+            print("Error while connecting to MySQL", e)
+
+
+import mysql.connector as msql
+
+import pandas.io.sql as sql
+conn = msql.connect(host='localhost', database='FinalProject', user='root', password='Shakthi#1399')
+
+df=sql.read_sql('select * from details', conn)
+print(df)
+df.to_excel('final.xls')
+
+
+DATA CLEANING IN MYSQL
+
+
+SELECT * FROM finalproject.details;
+
+update details set Sourcer = 'Unavailable'
+where Sourcer is null;
+
+update details set Profile = 'Unavailable'
+where Profile is null;
+
+update details set Date = 'Not Mentioned'
+where Date is null;
+
+update details set Name = 'Unavailable'
+where Name is null;
+
+update details set Contact_No = 'Unavailable'
+where Contact_No is null;
+
+update details set Contact_No = 'Unavailable'
+where not  regexp_like(Contact_No,'(0|91)?[6-9][0-9]{9}');
+
+update details
+set Email_Id = 'Unavailable'
+where Email_Id not regexp "^[a-zA-Z0-9][a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]*?[a-zA-Z0-9._-]?@[a-zA-Z0-9][a-zA-Z0-9._-]*?[a-zA-Z0-9]?\\.[a-zA-Z]{2,63}$";
+
+update details set Email_Id = 'Unavailable'
+where Email_Id is null;
+
+update details set ExperienceInYear = 'Not Mentioned'
+where ExperienceInYear is null;
+
+update details set Rel_Exp = 'Not Mentioned'
+where Rel_Exp is null;
+
+update details set CTC = 'Not Mentioned'
+where CTC is null;
+
+update details set ECTC = 'Not Mentioned'
+where ECTC is null;
+
+update details set NoticePeriod = 'Not Mentioned'
+where NoticePeriod is null;
+
+update details set Current_Location = 'Not Mentioned'
+where Current_Location is null;
+
+update details set Preferred_Location = 'Not Mentioned'
+where Preferred_Location is null;
+
+update details set CV_URL = 'Not Shared'
+where CV_URL is null;
+
+update details set LinkedIn_URL = 'Not Shared'
+where LinkedIn_URL is null;
+
+update details set Status = 'Not Shared'
+where Status is null;
+
+update details
+set Name = upper(Name);
+
+update details set Sourcer = concat(upper(substr(Sourcer,1,1)),lower(substr(Sourcer,2)));
+update details set Profile = concat(upper(substr(Profile,1,1)),lower(substr(Profile,2)));
+
+
